@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1C1B1A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MigraineLog">
+<title>MigraineLog</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== APP SHELL ===================== -->
+<div id="app" class="app">
+
+  <header class="topbar">
+    <span class="topbar-mark" aria-hidden="true"></span>
+    <h1 id="topbar-title" class="topbar-title">Log</h1>
+  </header>
+
+  <main id="views" class="views">
+
+    <!-- ---------- LOG VIEW ---------- -->
+    <section id="view-log" class="view" data-view="log">
+
+      <div class="month-card">
+        <p class="month-label">This month</p>
+        <div class="month-stats" id="month-stats">
+          <div class="month-stat">
+            <div class="month-stat-num" id="stat-count">0</div>
+            <div class="month-stat-label">migraines</div>
+          </div>
+          <div class="month-stat">
+            <div class="month-stat-num" id="stat-days">0</div>
+            <div class="month-stat-label">migraine days</div>
+          </div>
+          <div class="month-stat">
+            <div class="month-stat-num" id="stat-pain">—</div>
+            <div class="month-stat-label">avg pain</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div class="hero-halo" aria-hidden="true"></div>
+        <div class="streak-strip">
+          <div class="streak-num" id="streak-count">0</div>
+          <div class="streak-label">day logging streak</div>
+        </div>
+      </div>
+
+      <div class="log-toggle" role="tablist" aria-label="When did this happen">
+        <button class="toggle-btn is-active" id="mode-now" role="tab" aria-selected="true">Happening now</button>
+        <button class="toggle-btn" id="mode-past" role="tab" aria-selected="false">Add a past migraine</button>
+      </div>
+
+      <form id="entry-form" class="stack">
+
+        <div class="field" id="field-start">
+          <label for="start-time">Start</label>
+          <input type="datetime-local" id="start-time" required>
+        </div>
+
+        <div class="field" id="field-end">
+          <label for="end-time">End <span class="opt">(leave blank if still going)</span></label>
+          <input type="datetime-local" id="end-time">
+        </div>
+
+        <div class="field">
+          <label for="pain-level">Pain level — <span id="pain-level-out">5</span> / 10</label>
+          <input type="range" id="pain-level" min="1" max="10" value="5" class="slider">
+        </div>
+
+        <div class="field">
+          <label>Location</label>
+          <div class="chips" id="chips-location" data-multi="true">
+            <button type="button" class="chip" data-val="left">Left</button>
+            <button type="button" class="chip" data-val="right">Right</button>
+            <button type="button" class="chip" data-val="both">Both sides</button>
+            <button type="button" class="chip" data-val="front">Front</button>
+            <button type="button" class="chip" data-val="back">Back</button>
+            <button type="button" class="chip" data-val="temple">Temple</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Symptoms</label>
+          <div class="chips" id="chips-symptoms" data-multi="true">
+            <button type="button" class="chip" data-val="nausea">Nausea</button>
+            <button type="button" class="chip" data-val="aura">Aura</button>
+            <button type="button" class="chip" data-val="light">Light sensitivity</button>
+            <button type="button" class="chip" data-val="sound">Sound sensitivity</button>
+            <button type="button" class="chip" data-val="dizziness">Dizziness</button>
+            <button type="button" class="chip" data-val="vomiting">Vomiting</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Suspected triggers</label>
+          <div class="chips" id="chips-triggers" data-multi="true">
+            <button type="button" class="chip" data-val="stress">Stress</button>
+            <button type="button" class="chip" data-val="sleep">Poor sleep</button>
+            <button type="button" class="chip" data-val="weather">Weather</button>
+            <button type="button" class="chip" data-val="hormonal">Hormonal</button>
+            <button type="button" class="chip" data-val="food">Food / drink</button>
+            <button type="button" class="chip" data-val="screens">Screen time</button>
+            <button type="button" class="chip" data-val="dehydration">Dehydration</button>
+            <button type="button" class="chip" data-val="skipped-meal">Skipped meal</button>
+            <button type="button" class="chip" data-val="alcohol">Alcohol</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="med-select">Medication taken <span class="opt">(optional)</span></label>
+          <select id="med-select">
+            <option value="">None</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="relief">Relief <span class="opt">(1 = none, 10 = full relief)</span></label>
+          <input type="range" id="relief" min="0" max="10" value="0" class="slider">
+          <div class="slider-out"><span id="relief-out">—</span></div>
+        </div>
+
+        <div class="field">
+          <label for="notes">Notes <span class="opt">(optional)</span></label>
+          <textarea id="notes" rows="3" placeholder="Anything else worth remembering"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-big">Save entry</button>
+      </form>
+    </section>
+
+    <!-- ---------- CHECK-IN VIEW ---------- -->
+    <section id="view-checkin" class="view" data-view="checkin" hidden>
+      <p class="view-intro">A quick daily note, even on days without a migraine — this is what makes the pattern insights meaningful.</p>
+      <form id="checkin-form" class="stack">
+        <div class="field">
+          <label for="ci-sleep">Sleep last night (hours)</label>
+          <input type="number" id="ci-sleep" min="0" max="16" step="0.5" placeholder="7.5">
+        </div>
+        <div class="field">
+          <label for="ci-sleep-quality">Sleep quality — <span id="ci-sleep-quality-out">3</span> / 5</label>
+          <input type="range" id="ci-sleep-quality" min="1" max="5" value="3" class="slider">
+        </div>
+        <div class="field">
+          <label for="ci-stress">Stress level — <span id="ci-stress-out">3</span> / 5</label>
+          <input type="range" id="ci-stress" min="1" max="5" value="3" class="slider">
+        </div>
+        <div class="field">
+          <label for="ci-water">Water intake <span class="opt">(cups, optional)</span></label>
+          <input type="number" id="ci-water" min="0" max="20" step="1">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Save today's check-in</button>
+      </form>
+      <p id="checkin-done-msg" class="muted-note" hidden>Logged for today. Thank you.</p>
+    </section>
+
+    <!-- ---------- HISTORY VIEW ---------- -->
+    <section id="view-history" class="view" data-view="history" hidden>
+      <div id="history-list" class="stack"></div>
+      <div id="history-empty" class="empty-state" hidden>
+        <svg class="empty-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="8" y="10" width="32" height="30" rx="5" stroke="currentColor" stroke-width="1.6"/><path d="M8 19h32M16 6v6M32 6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <p>No entries yet. When you log a migraine, it'll show up here.</p>
+      </div>
+    </section>
+
+    <!-- ---------- INSIGHTS VIEW ---------- -->
+    <section id="view-insights" class="view" data-view="insights" hidden>
+      <div id="insights-content" class="stack"></div>
+    </section>
+
+    <!-- ---------- MEDS VIEW ---------- -->
+    <section id="view-meds" class="view" data-view="meds" hidden>
+      <form id="med-form" class="row-form">
+        <input type="text" id="med-name" placeholder="Medication name" required>
+        <input type="text" id="med-dose" placeholder="Dose (optional)">
+        <select id="med-type">
+          <option value="abortive">Abortive</option>
+          <option value="preventive">Preventive</option>
+        </select>
+        <button type="submit" class="btn btn-secondary">Add</button>
+      </form>
+      <div id="med-list" class="stack"></div>
+    </section>
+
+    <!-- ---------- SETTINGS VIEW ---------- -->
+    <section id="view-settings" class="view" data-view="settings" hidden>
+      <div class="stack">
+        <div class="settings-block">
+          <h2>Backup</h2>
+          <p class="muted-note">Your data lives only in this browser. Export it regularly and keep the file somewhere safe, like the Files app or iCloud Drive.</p>
+          <button id="btn-export" class="btn btn-primary btn-block">Export backup (JSON)</button>
+          <label class="btn btn-secondary btn-block file-btn">
+            Import backup
+            <input type="file" id="import-input" accept="application/json" hidden>
+          </label>
+          <p id="backup-status" class="muted-note" hidden></p>
+        </div>
+
+        <div class="settings-block">
+          <h2>Reminders</h2>
+          <p class="muted-note">Notifications only work while MigraineLog is open from its home screen icon — iOS doesn't allow background reminders for web apps without a push server, which this app intentionally doesn't use.</p>
+          <button id="btn-notify" class="btn btn-secondary btn-block">Enable reminder check on open</button>
+        </div>
+
+        <div class="settings-block">
+          <h2>Data</h2>
+          <button id="btn-wipe" class="btn btn-danger btn-block">Delete all data</button>
+        </div>
+
+        <p class="version-note">MigraineLog · local-only · no network requests</p>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar" aria-label="Sections">
+    <button class="tab is-active" data-target="log">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M5 8l7-5 7 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Log</span>
+    </button>
+    <button class="tab" data-target="checkin">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Check-in</span>
+    </button>
+    <button class="tab" data-target="history">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M4 10h16M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>History</span>
+    </button>
+    <button class="tab" data-target="insights">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V10M12 19V5M19 19v-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>Insights</span>
+    </button>
+    <button class="tab" data-target="meds">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="4.5" width="15" height="15" rx="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M4.8 14.2L14.2 4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>Meds</span>
+    </button>
+    <button class="tab" data-target="settings">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 8.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>More</span>
+    </button>
+  </nav>
+
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
